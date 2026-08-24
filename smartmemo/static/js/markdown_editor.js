@@ -59,6 +59,8 @@ if(!previewDiv || !textarea){
                         const pyodide = await getPyodide();
                         outputDiv.style.display = 'block';
                         outputDiv.textContent = '';
+                        outputDiv.classList.remove('text-danger');
+                        outputDiv.classList.add('text-light');
                         
                         try{
                             pyodide.setStdout({
@@ -76,8 +78,23 @@ if(!previewDiv || !textarea){
                             );
                         
                         }catch (err){
-                            outputDiv.textContent += 'Error: ' + err.message + '\n';
+                            //エラー表示に×マークを追加
+                            outputDiv.classList.remove('text-light');
+                            outputDiv.classList.add('text-danger');
+
+                            //エラー内容を表示
+                            outputDiv.textContent = 
+                            `❌ ${err.name ||'Error'}: ${err.message}\n`;
+
+                            //エラー内容もMarkdownへ保存する
+                            updateOutputBlock(
+                                editor,
+                                block.textContent,
+                                outputDiv.textContent,
+                                true
+                            )
                         }
+
                         //フォーム送信用に、画面に表示された実行結果を hidden input (execution-output) にセット
                         const hiddenOutput = document.getElementById("execution-output");
                         if(hiddenOutput){
@@ -92,46 +109,59 @@ if(!previewDiv || !textarea){
                 });
             }
 
-            function updateOutputBlock(editor,code,output){
+            //コードブロックごとに実行管理
+            function updateOutputBlock(editor,code,output,isError){
                 
-                //コードブロックごとに実行管理
+                //エディタ全体のMarkdownを取得
                 const currentContent = editor.getValue();
 
+                //実行したPyhtonコードブロックを作成
                 const codeBlock = 
                 "```python\n" + 
                 code.trim() + 
                 "\n```";
 
+                const fenceLabel = isError ? 'error' : 'text';
+
+                //実行結果ブロックを作成
                 const outputBlock = 
-                "\n\n```text\n" + 
+                "\n\n```" + fenceLabel + "\n" + 
                 output.trim() +
                 "\n```\n";
 
+                //実行したコードブロックの位置を検索
                 const position = currentContent.indexOf(codeBlock);
 
+                //コードが見つからなければ終了
                 if (position === -1){
                     return;
                 }
 
+                //コードブロックまで内容を取得
                 const before = currentContent.slice(
                     0,
                     position + codeBlock.length
                 );
 
+                // コードブロック以降の内容を取得
                 let after = currentContent.slice(
                     position + codeBlock.length
                     
                 );
+
+                //既存の実行結果(textブロック)を削除
                 after = after.replace(
-                        /^\s*```text[\s\S]*?```\s*/,
+                        /^\s*```(?:text|error)[\s\S]*?```\s*/,
                         ""
                     );
 
+                //新しい実行結果を導入    
                 const newContent = 
                 before + 
                 outputBlock + 
                 after;
-
+                
+                //エディタを更新
                 editor.setValue(newContent);
 
             }

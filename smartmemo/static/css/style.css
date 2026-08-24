@@ -115,3 +115,13 @@ Smartmemo login 画面UIデザインを作成
     font-family:'Consolas', 'Menlo', monospace;
     font-size:0.9rem;
 }
+
+/*エラー文字を赤くする*/
+#preview pre code.language-error{
+    color: #ff6b6b;
+    background-color: #2b1414;
+    display: block;
+    padding: 0.5rem;
+    border-radius: 4px;
+    white-space: pre-wrap;
+}
