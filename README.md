@@ -10,15 +10,18 @@
 
 【アプリのスクリーンショット】
 
-- ダークテーマ対応
-![Darktheme](screenshots/127.0.0.1_8000_memo_20_.png)
+- エラー結果をMarkdownノートへ保存 
+![エラー結果をMarkdownノートへ保存](screenshots/error-result_1.png)
+
+![エラー結果をMarkdownノートへ保存](screenshots/error-result_2.png)
 
 
 ## Ver6.0 更新内容
+- 🆕Python実行結果・エラー結果をMarkdownノートへ保存(Save Python execution results and errors to Markdown notes)
 - Markdown記法によるメモ作成・編集に対応（Markdown support for creating/editing memos）
-- 🆕KaTeXによる数式表示に対応（KaTeX support for mathematical expressions）
-- 🆕Pyodideを利用したブラウザ上でのPythonコード実行機能を追加（Added browser-based Python execution using Pyodide）
-- 🆕Python実行結果をMarkdownノート内へ保存できるよう改善（Python execution results can be saved directly into Markdown notes）
+- KaTeXによる数式表示に対応（KaTeX support for mathematical expressions）
+- Pyodideを利用したブラウザ上でのPythonコード実行機能を追加（Added browser-based Python execution using Pyodide）
+- Python実行結果をMarkdownノート内へ保存できるよう改善（Python execution results can be saved directly into Markdown notes）
 - CodeMirrorエディタを導入し、行番号・シンタックスハイライト付きの入力欄に（Integrated CodeMirror editor with line numbers and syntax highlighting）
 - marked.js + DOMPurifyでリアルタイムMarkdownプレビューを実装（XSS対策込み）（Real-time Markdown preview with XSS sanitization）
 - markdown + bleachでサーバー側でも安全にMarkdownをHTML変換し一覧・詳細画面に反映（Server-side Markdown rendering with sanitization）
@@ -41,9 +44,9 @@
 - Markdown対応メモ作成・編集（Markdown-based memo creation/editing）
 - コードエディタ（CodeMirror、シンタックスハイライト付き）
 - メモ詳細画面（Memo detail page）
-- 🆕KaTeX数式表示（KaTeX Math Rendering）
-- 🆕Pythonコード実行（Browser-based Python Execution）
-- 🆕Python実行結果のノート保存（Save Python Execution Results）
+- KaTeX数式表示（KaTeX Math Rendering）
+- Pythonコード実行（Browser-based Python Execution）
+- Python実行結果・エラー結果を保存（Save Python Execution Results　and Errors）
 
 ## Technical Highlights(開発内容)
 - Django標準認証フォームをカスタマイズ（Customized Django authentication forms）
@@ -57,12 +60,16 @@
 - marked.js + DOMPurifyによるXSS対策済みMarkdownプレビュー
 - Python markdownライブラリ + bleachによるサーバーサイドのMarkdownサニタイズ
 - CodeMirrorエディタの導入とMonokaiテーマ適用
-- 🆕CodeMirrorを利用したMarkdownコードエディタ
-- 🆕marked.js + DOMPurifyによるリアルタイムMarkdownプレビュー
-- 🆕KaTeXによる数式レンダリング
-- 🆕Pyodideによるブラウザ内Python実行環境
-- 🆕Python実行結果をMarkdownへ自動反映するノート機能
-- 🆕JavaScriptの共通モジュール化（markdown_editor.js / markdown_viewer.js）
+- CodeMirrorを利用したMarkdownコードエディタ導入
+- KaTeXによる数式レンダリング
+- Pyodideによるブラウザ内Python実行環境
+- Python実行結果をMarkdownへ自動反映するノート機能
+- JavaScriptの共通モジュール化（markdown_editor.js / markdown_viewer.js）
+- コードブロックごとのPython実行結果管理（Execution result management for each Python code block）
+- Python実行結果・エラー結果のMarkdown自動保存（Automatic saving of Python execution results and errors to Markdown）
+- 'text'/'error' コードブロックによる実行結果とエラーの区別（Distinguishing execution results and errors using `text` / `error` code blocks）
+- CSSによるPython実行エラーの視覚的表示 （Visual error display using CSS）
+
 
 
 ## Tech Stack
@@ -87,7 +94,7 @@
 - Ver3.0 Authentication
 - Ver4.0 Profile / Password Change / Account Deletion
 - Ver5.0 Profile Image Upload & Password Reset
-- Ver6.0 Markdown, KaTeX & Python Execution
+- Ver6.0 Markdown, KaTeX & Python Execution　/ Execution Results & Error Handling
 
 ## 開発メモ
 SmartMemoは、Djangoの学習とWebアプリケーション開発の理解を目的として開発しています。
