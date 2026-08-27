@@ -10,7 +10,7 @@
     </head>
     
     <body>
-        <div class="container mt-5">
+        <div class="container mt-5 px-4">
             <h1 class="container mb-4">
                 メモを編集
             </h1> 
@@ -30,18 +30,23 @@
                     <input type="text" name="title" value="{{memo.title}}" class="form-control">
                 </div>
 
-                <div class="row">
-                    <div class="col-md-6 mb-3">
+                <div class="editor-preview-container">
+
+                    <div class="editor-section">
                         <label class="form-label">内容(Markdown形式で記述可能)</label>
+                        <!--editor-paneを追加-->
                         <textarea 
                         id="memo-content"
                         name="content" 
                         rows="6"
-                        class="form-control">{{memo.content}}</textarea>
+                        class="form-control editor-pane">{{memo.content}}</textarea>
                     </div>
-                    <div class=" col-md-6 mb-3">
+
+                    <div class="resize-handle"></div>
+
+                    <div class="preview-section">
                         <label class="form-label">プレビュー</label>
-                        <div id="preview" class="border rounded p-3" style="height:375px; overflow-y:auto;"></div>
+                        <div id="preview" class="border rounded p-3 editor-pane" style="overflow-y:auto;"></div>
                     </div>
                 </div>
                 

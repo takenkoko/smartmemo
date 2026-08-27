@@ -125,3 +125,31 @@ Smartmemo login 画面UIデザインを作成
     border-radius: 4px;
     white-space: pre-wrap;
 }
+
+/*画面大きさを変更*/
+.editor-pane{
+    height: calc(100vh - 320px);
+    min-height: 300px ; /*画面が小さいとき下限*/
+}
+
+/*Editor/Preview*/
+.editor-preview-container{
+    display: flex;
+    width: 100%;
+    gap: 0;
+}
+
+.editor-section,
+.preview-section{
+    flex: 1;
+    min-width: 0;
+
+}
+
+.resize-handle{
+    width: 8px;
+    cursor: col-resize;
+    background-color: #dee2e6;
+    margin: 0 8px;
+    border-radius: 4px;
+}

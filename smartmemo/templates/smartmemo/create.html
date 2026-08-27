@@ -53,18 +53,22 @@
                     </select>
                  </div>
 
-                <div class="row">
-                    <div class="col-md-6 mb-3">
+                <div class="editor-preview-container">
+
+                    <div class="editor-section">
                         <label class="form-label">
                             内容 (Markdown形式で記述可能)
                         </label>
-                        <textarea id="memo-content" name="content" class="form-control" rows="6"></textarea>
+                        <textarea id="memo-content" name="content" class="form-control editor-pane" rows="6"></textarea>
                     </div>
-                    <div class="col-md-6 mb-3">
+
+                    <div class="resize-handle"></div>
+
+                    <div class="preview-section">
                         <label class="form-label">
                             プレビュー
                         </label>
-                        <div id="preview" class="border rounded p-3" style="height:375px; overflow-y:auto;"></div>
+                        <div id="preview" class="border rounded p-3 editor-pane" style="overflow-y:auto;"></div>
                     </div>
                 </div>
                  

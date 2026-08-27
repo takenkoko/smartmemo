@@ -20,7 +20,16 @@ if(!previewDiv || !textarea){
                 "Enter":"newlineAndIndentContinueMarkdownList"}
             });
             
-            editor.setSize('100%',375);//高さプレビュー欄を揃える
+            function resizeEditor(){
+                editor.setSize(
+                '100%', 
+                document.querySelector('#preview').clientHeight
+            );//高さプレビュー欄を揃える
+
+            }
+            
+            resizeEditor();
+            
             //pyodideの読み込み
             let pyodideReadyPromise = null;
             async function getPyodide() {
@@ -202,6 +211,39 @@ if(!previewDiv || !textarea){
             form.addEventListener('submit', ()=>{
                 editor.save(); 
             
+            });
+
+
+            //Editor / Preview の幅を変更
+            const resizeHandle = document.querySelector('.resize-handle');
+            const editorSection = document.querySelector('.editor-section');
+            const previewSection = document.querySelector('.preview-section');
+
+            let isResizing = false;
+
+            resizeHandle.addEventListener('mousedown',function(){
+                isResizing = true;
+                document.body.style.cursor = 'col-resize';
+            });
+
+            document.addEventListener('mousemove',function(event){
+                if(!isResizing)return;
+
+                const container = document.querySelector('.editor-preview-container');
+                const rect = container.getBoundingClientRect();
+
+                const width = event.clientX - rect.left;
+                const percentage = (width / rect.width) * 100;
+
+                editorSection.style.flex =`0 0 ${percentage}%`;
+                previewSection.style.flex = '1';
+            });
+
+            document.addEventListener('mouseup',function(){
+                if(!isResizing)return;
+
+                isResizing = false;
+                document.body.style.cursor = '';
             });
             
     
