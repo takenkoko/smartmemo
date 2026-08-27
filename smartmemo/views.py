@@ -7,6 +7,7 @@ from django.contrib.auth import logout
 from .forms import RegisterForm,ProfileEditForm,ProfileImageForm  #ユーザー登録機能 #アイコン追加
 from .models import Profile
 from django.shortcuts import render,redirect
+from django.core.paginator import Paginator #ページネーションを追加
 
 import markdown
 import bleach
@@ -26,11 +27,16 @@ def render_memo_content(memo):
 def index(request):
     memos=Memo.objects.filter(user=request.user)
 
-    for memo in memos:
+    #ここにページネーション機能を追加します
+    paginator = Paginator(memos,10)
+    page_number = request.GET.get("page")
+    page_obj = paginator.get_page(page_number)
+
+    for memo in page_obj:
         memo.content_html = render_memo_content(memo.content)
         
     return render(request,"smartmemo/index.html",{
-        "memos":memos,
+        "memos":page_obj,
     })
 
 #========================

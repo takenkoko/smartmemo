@@ -44,4 +44,34 @@ SmartMemoへようこそ!
     +新しいメモ作成
 </a>
 
+<!--ページネーション-->
+<nav aria-label="メモ一覧のページ">
+    <ul class="pagination justify-content-center">
+
+        {% if memos.has_previous %}
+        <li class="page-item">
+            <a class="page-link" href="?page={{ memos.previous_page_number }}">
+                前へ
+            </a>
+        </li>
+        {% endif %}
+
+        {% for num in memos.paginator.page_range %}
+        <li class="page-item {% if memos.number == num %}active{% endif %}">
+            <a class="page-link" href="?page={{ num }}">
+                {{num}}
+            </a>
+        </li>
+        {% endfor %}
+
+        {% if memos.has_next %}
+        <li class="page-item">
+            <a class="page-link" href="?page={{ memos.next_page_number }}">
+                次へ
+            </a>
+        </li>
+        {% endif %}
+    </ul>
+</nav>
+
 {% endblock %}
