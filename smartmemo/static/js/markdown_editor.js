@@ -233,8 +233,14 @@ if(!previewDiv || !textarea){
                 const rect = container.getBoundingClientRect();
 
                 const width = event.clientX - rect.left;
-                const percentage = (width / rect.width) * 100;
+                let percentage = (width / rect.width) * 100;
 
+                //Editor / Preview の最小・最大幅を設定
+                const minWidth = 25;
+                const maxWidth = 75;
+
+                percentage = Math.max(minWidth, Math.min(maxWidth,percentage));
+                
                 editorSection.style.flex =`0 0 ${percentage}%`;
                 previewSection.style.flex = '1';
             });

@@ -150,6 +150,11 @@ Smartmemo login 画面UIデザインを作成
     width: 8px;
     cursor: col-resize;
     background-color: #dee2e6;
-    margin: 0 8px;
+    margin: 0 4px;
     border-radius: 4px;
+    flex-shrink: 0;
+}
+
+.resize-handle:hover{
+    background-color: #abb5bd;
 }
