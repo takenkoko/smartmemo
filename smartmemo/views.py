@@ -135,13 +135,17 @@ def search(request):
             Q(content__icontains=keyword)
 
         )
-    
+
+    #検索結果にもページネーションを追加する
+    paginator = Paginator(memos,10)
+    page_number = request.GET.get("page")
+    page_obj = paginator.get_page(page_number)
 
     return render(
         request,
         "smartmemo/index.html",
         {
-            "memos":memos,
+            "memos":page_obj,
             "keyword":keyword,
         }
     )

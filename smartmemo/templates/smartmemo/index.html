@@ -40,7 +40,7 @@ SmartMemoへようこそ!
 </div>
 {% endfor %}
         
-<a href="create/" class="btn btn-primary btn-lg">
+<a href="{% url 'create' %}" class="btn btn-primary btn-lg">
     +新しいメモ作成
 </a>
 
@@ -50,25 +50,43 @@ SmartMemoへようこそ!
 
         {% if memos.has_previous %}
         <li class="page-item">
+            {% if keyword %}
+            <a class="page-link" href="?keyword={{ keyword }}&page={{ memos.previous_page_number }}">
+                前へ
+            </a>
+            {% else %}
             <a class="page-link" href="?page={{ memos.previous_page_number }}">
                 前へ
             </a>
+            {% endif %}
         </li>
         {% endif %}
 
         {% for num in memos.paginator.page_range %}
         <li class="page-item {% if memos.number == num %}active{% endif %}">
-            <a class="page-link" href="?page={{ num }}">
+            {% if keyword %}
+             <a class="page-link" href="?keyword={{ keyword }}&page={{ num }}">
                 {{num}}
-            </a>
+             </a>
+            {% else %}
+             <a class="page-link" href="?page={{ num }}">
+                {{num}}
+             </a>
+            {% endif %}
         </li>
         {% endfor %}
 
         {% if memos.has_next %}
         <li class="page-item">
+            {% if keyword %}
+            <a class="page-link" href="?keyword={{ keyword }}&page={{ memos.next_page_number }}">
+                次へ
+            </a>
+            {% else %}
             <a class="page-link" href="?page={{ memos.next_page_number }}">
                 次へ
             </a>
+            {% endif %}
         </li>
         {% endif %}
     </ul>
