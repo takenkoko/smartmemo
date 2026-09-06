@@ -8,5 +8,4 @@ document.addEventListener("DOMContentLoaded", function() {
             {left: "$", right: "$", display: false}
         ],
     });
-    attachRunButtons(displayDiv);
 });

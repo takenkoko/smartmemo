@@ -29,15 +29,99 @@ if(!previewDiv || !textarea){
             }
             
             resizeEditor();
+
+            //Pyodide Workerを作成
+            let pyodideWorker = null;
+
             
-            //pyodideの読み込み
-            let pyodideReadyPromise = null;
-            async function getPyodide() {
-                if (!pyodideReadyPromise) {
-                    pyodideReadyPromise = loadPyodide();
+            //現在実行中のPythonコードに関する情報
+            let currentOutputDiv = null;
+            let currentButton = null;
+            let currentCode = null;
+            let executionTimer = null;
+
+            function createPyodideWorker(){
+                
+                pyodideWorker = new Worker('/static/js/pyodide_worker.js');
+
+                console.log("Pyodide Worker created.");
+                
+                //Pyodide Workerからのメッセージを受け取る
+                pyodideWorker.addEventListener('message',function(event){
+                    
+                    const { type, text, name, message } = event.data;
+                    
+                    if (!currentOutputDiv){
+                        return;
+                    }
+                    
+                    //Pythonのprint()出力
+                    if(type === 'stdout'){
+                        currentOutputDiv.textContent += text + "\n";
+                    }
+                    
+                    //Pythonの実行完了
+                    if(type === 'done'){
+                        
+                        updateOutputBlock(
+                        editor,
+                        currentCode,
+                        currentOutputDiv.textContent
+                    );
+                    
+                    const hiddenOutput = document.getElementById("execution-output");
+                    
+                    if(hiddenOutput){
+                        hiddenOutput.value = currentOutputDiv.textContent;
+                    }
+
+                    if(currentButton){
+                        currentButton.disabled = false;
+                        currentButton.textContent = '▶ Run';
+                    }
+
+                    currentOutputDiv = null;
+                    currentButton = null;
+                    currentCode = null;
                 }
-                return pyodideReadyPromise;
+                //Pythonエラー 
+                if(type === 'error'){
+                    currentOutputDiv.classList.remove('text-light');
+                    currentOutputDiv.classList.add('text-danger');
+                    
+                    
+                    currentOutputDiv.textContent = 
+                    `❌ ${name || 'Error'}: ${message}\n`;
+
+                    updateOutputBlock(
+                        editor,
+                        currentCode,
+                        currentOutputDiv.textContent,
+                        true
+                    );
+
+                    const hiddenOutput = document.getElementById("execution-output");
+
+                    if(hiddenOutput){
+                        hiddenOutput.value = currentOutputDiv.textContent;
+                    }
+
+                    if(currentButton){
+                        currentButton.disabled = false;
+                        currentButton.textContent = '▶ Run';
+                    }
+
+                    currentOutputDiv = null;
+                    currentButton = null;
+                    currentCode = null;
+                }
+                });
+
+            
             }
+            //最初のWorkerを作成
+            createPyodideWorker();
+           
             //コードブロック実行ボタンを追加する
             function attachRunButtons(container){
                 const codeBlocks = container.querySelectorAll('pre code');
@@ -62,47 +146,80 @@ if(!previewDiv || !textarea){
                     outputDiv.style.display = 'none';
                     
                     button.addEventListener('click',async function(){
-                        button.disabled = true;
-                        button.textContent = 'Running...';
+
+                        //Stopボタンとして動作するようにする
+                        if(button.textContent === '■ Stop'){
+
+                            console.log("Stop Clicked.");
+                            console.log("Before Terminate");
+
+                            //Workerを停止
+                            pyodideWorker.terminate();
+                            console.log("After Terminate");
+
+                            //新しいWorkerを作成
+                            createPyodideWorker();
+                            console.log("Worker Recreated");
+
+                            //実行状態をリセット
+                            currentOutputDiv = null;
+                            currentButton = null;
+                            currentCode = null;
+
+                            button.textContent = '▶ Run';
+
+                            return;
+                        }
+
+                        button.disabled = false;
+                        button.textContent = '■ Stop';
                         
-                        const pyodide = await getPyodide();
+                        
                         outputDiv.style.display = 'block';
                         outputDiv.textContent = '';
                         outputDiv.classList.remove('text-danger');
                         outputDiv.classList.add('text-light');
                         
-                        try{
-                            pyodide.setStdout({
-                                batched: (text) => {
-                                    outputDiv.textContent += text + '\n';
-                                }
-                            });
-                            await pyodide.runPythonAsync(block.textContent);
+                        //現在のコードブロックの情報を保存
+                        currentOutputDiv = outputDiv;
+                        currentButton = button;
+                        currentCode = block.textContent;
 
-                            //updateOutputBlock()を呼び出す
-                            updateOutputBlock(
-                                editor,
-                                block.textContent,
-                                outputDiv.textContent
-                            );
-                        
-                        }catch (err){
-                            //エラー表示に×マークを追加
-                            outputDiv.classList.remove('text-light');
-                            outputDiv.classList.add('text-danger');
+                        //WorkerにPythonコードを送信して実行
+                        pyodideWorker.postMessage({
+                            type: 'run',
+                            code: block.textContent
+                        });
 
-                            //エラー内容を表示
-                            outputDiv.textContent = 
-                            `❌ ${err.name ||'Error'}: ${err.message}\n`;
+                        //タイムアウトタイマーを開始
+                        console.log("Timeout Timer Started.");
 
-                            //エラー内容もMarkdownへ保存する
-                            updateOutputBlock(
-                                editor,
-                                block.textContent,
-                                outputDiv.textContent,
-                                true
-                            )
-                        }
+                        executionTimer = setTimeout(function(){
+
+                            console.log("Python execution timed out.");
+
+                            //Workerを停止
+                            pyodideWorker.terminate();
+                            //新しいWorkerを作成
+                            createPyodideWorker();
+
+                            //タイムアウトメッセージを表示
+                            if(currentOutputDiv){
+                                currentOutputDiv.classList.remove('text-light');
+                                currentOutputDiv.classList.add('text-danger');
+                                currentOutputDiv.textContent = '❌ Timeout:実行時間が10秒を超えたため停止しました。\n';
+                            }
+                            if(currentButton){
+                                currentButton.disabled = false;
+                                currentButton.textContent = '▶ Run';
+                            }
+                            //実行状態をリセット
+                            currentOutputDiv = null;
+                            currentButton = null;
+                            currentCode = null; 
+
+                        }, 10000); //10秒のタイムアウト
+
 
                         //フォーム送信用に、画面に表示された実行結果を hidden input (execution-output) にセット
                         const hiddenOutput = document.getElementById("execution-output");
@@ -110,8 +227,6 @@ if(!previewDiv || !textarea){
                             hiddenOutput.value = outputDiv.textContent;
                         }
 
-                        button.disabled = false;
-                        button.textContent = '▶ Run';
                     });
                     block.parentNode.insertAdjacentElement('afterend',button);
                     button.insertAdjacentElement('afterend',outputDiv);
