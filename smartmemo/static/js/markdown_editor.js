@@ -42,14 +42,78 @@ if(!previewDiv || !textarea){
 
             function createPyodideWorker(){
                 
-                pyodideWorker = new Worker('/static/js/pyodide_worker.js');
+                pyodideWorker = new Worker('/static/js/pyodide_worker.js?v=2');
 
                 console.log("Pyodide Worker created.");
+
+                //Workerのエラーを受け取る
+                pyodideWorker.addEventListener('error',function(event){
+                    console.error("Pyodide Worker Error:",event.message);
+                    console.error("Worker error filename:",event.filename);
+                    console.error("Worker error line",event.lineno);
+
+                });
                 
                 //Pyodide Workerからのメッセージを受け取る
                 pyodideWorker.addEventListener('message',function(event){
                     
-                    const { type, text, name, message } = event.data;
+                    const { type, text, name, message,prompt } = event.data;
+
+                    if(type === 'worker_started'){
+                        console.log("Worker started successfully.");
+                    }
+
+                    if(type === 'worker_message_reveived'){
+                        console.log("Worker received message.");
+                    }
+
+                    if(type === 'worker_load_started'){
+                        console.log("Pyodide Worker load started.");
+                    }
+
+                    //Smart Inputの登録完了を受け取った場合
+                    if(type === 'smart_input_registered'){
+                        console.log("Smart Input registered.");
+                    }
+
+                    //Pythonコードから入力要求を受け取った場合
+                    if(type === 'input_request'){
+                        console.log("Input request received:", prompt);
+
+                        const inputDiv = document.createElement('div');
+                        inputDiv.className = 'mt-2';
+                        
+                        const inputField = document.createElement('input');
+                        inputField.type = 'text';
+                        inputField.className = 'form-control';
+                        inputField.placeholder = prompt;
+                        
+                        const submitButton = document.createElement('button');
+                        submitButton.textContent = '入力';
+                        submitButton.type = 'button';
+                        submitButton.className = 'btn-primary mt-2';
+
+                        //入力ボタンが押されたとき
+                        submitButton.addEventListener('click',function(){
+
+                            const userInput = inputField.value;
+
+                            console.log("User Input:", userInput);
+
+                            //入力値をWorkerへ送信
+                            pyodideWorker.postMessage({
+                                type:'input',
+                                userInput: userInput
+                            });
+                        });
+                        
+                        inputDiv.appendChild(inputField);
+                        inputDiv.appendChild(submitButton);
+
+                        currentOutputDiv.appendChild(inputDiv);
+
+                    }
+
                     
                     if (!currentOutputDiv){
                         return;
@@ -180,17 +244,23 @@ if(!previewDiv || !textarea){
                         outputDiv.classList.remove('text-danger');
                         outputDiv.classList.add('text-light');
                         
+                      
+                        //Pythonコードを取得
+                        const code = block.textContent;
+
                         //現在のコードブロックの情報を保存
                         currentOutputDiv = outputDiv;
                         currentButton = button;
-                        currentCode = block.textContent;
+                        currentCode = code;
 
-                        //WorkerにPythonコードを送信して実行
+                        //PythonコードをWorkerへ送信
+                        console.log("Sending run message to Worker.");
+
                         pyodideWorker.postMessage({
-                            type: 'run',
-                            code: block.textContent
+                            type:'run',
+                            code:code
                         });
-
+                        
                         //タイムアウトタイマーを開始
                         console.log("Timeout Timer Started.");
 
