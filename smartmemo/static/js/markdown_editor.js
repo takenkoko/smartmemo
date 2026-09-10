@@ -80,8 +80,13 @@ if(!previewDiv || !textarea){
                     if(type === 'input_request'){
                         console.log("Input request received:", prompt);
 
+                        //入力待ちのためタイマー停止
+                        clearTimeout(executionTimer);
+                        executionTimer = null;
+
                         const inputDiv = document.createElement('div');
                         inputDiv.className = 'mt-2';
+                        inputDiv.dataset.smartInput = 'true';
                         
                         const inputField = document.createElement('input');
                         inputField.type = 'text';
@@ -121,22 +126,45 @@ if(!previewDiv || !textarea){
                     
                     //Pythonのprint()出力
                     if(type === 'stdout'){
-                        currentOutputDiv.textContent += text + "\n";
+
+
+                        const outputTextDiv = currentOutputDiv.querySelector('[data-smart-output-text]');
+                        
+    
+                        if(outputTextDiv){
+                            outputTextDiv.textContent += text + "\n";
+                        }
+
                     }
                     
                     //Pythonの実行完了
                     if(type === 'done'){
+
+                        //入力UIを除外して実行結果だけ取得する
+                        const inputDiv = currentOutputDiv.querySelector('[data-smart-input]');
+
+
+                        if(inputDiv){
+                            inputDiv.remove();
+                        }
+
+                        //実行結果だけ取得する
+                        const outputTextDiv = currentOutputDiv.querySelector('[data-smart-output-text]');
+
+                        const executionOutput = outputTextDiv ? outputTextDiv.textContent : '';
+
+                        console.log("Execution Output:",executionOutput);
                         
                         updateOutputBlock(
                         editor,
                         currentCode,
-                        currentOutputDiv.textContent
+                        executionOutput
                     );
                     
                     const hiddenOutput = document.getElementById("execution-output");
                     
                     if(hiddenOutput){
-                        hiddenOutput.value = currentOutputDiv.textContent;
+                        hiddenOutput.value = executionOutput;
                     }
 
                     if(currentButton){
@@ -148,6 +176,7 @@ if(!previewDiv || !textarea){
                     currentButton = null;
                     currentCode = null;
                 }
+
                 //Pythonエラー 
                 if(type === 'error'){
                     currentOutputDiv.classList.remove('text-light');
@@ -202,12 +231,22 @@ if(!previewDiv || !textarea){
                     button.textContent = '▶ Run';
                     button.type = 'button';
                     button.className = 'btn btn-sm btn-success mb-2';
+
                     
                     const outputDiv = document.createElement('div');
+
+                    const outputTextDiv = document.createElement('div');
+                    outputTextDiv.dataset.smartOutputText = 'true';
+
+                    outputDiv.appendChild(outputTextDiv);
+
                     outputDiv.className = 'mt-2 p-2 bg-dark text-light rounded';
                     outputDiv.style.fontFamily = 'monospace';
                     outputDiv.style.whiteSpace = 'pre-wrap';
                     outputDiv.style.display = 'none';
+
+                    //実行結果
+                    outputDiv.dataset.smartOutput ='true';
                     
                     button.addEventListener('click',async function(){
 
@@ -240,7 +279,13 @@ if(!previewDiv || !textarea){
                         
                         
                         outputDiv.style.display = 'block';
-                        outputDiv.textContent = '';
+                        
+                        const outputTextDiv = outputDiv.querySelector('[data-smart-output-text]');
+
+                        if(outputTextDiv){
+                            outputTextDiv.textContent = '';
+                        }
+                        
                         outputDiv.classList.remove('text-danger');
                         outputDiv.classList.add('text-light');
                         
