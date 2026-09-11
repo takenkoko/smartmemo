@@ -57,7 +57,7 @@ if(!previewDiv || !textarea){
                 //Pyodide Workerからのメッセージを受け取る
                 pyodideWorker.addEventListener('message',function(event){
                     
-                    const { type, text, name, message,prompt } = event.data;
+                    const { type, text, name, message, prompt } = event.data;
 
                     if(type === 'worker_started'){
                         console.log("Worker started successfully.");
@@ -115,7 +115,17 @@ if(!previewDiv || !textarea){
                         inputDiv.appendChild(inputField);
                         inputDiv.appendChild(submitButton);
 
+                        //一時追加
+                        console.log("Current Output Div before append:",currentOutputDiv);
+                        console.log("Input Div before append:",inputDiv);
+
                         currentOutputDiv.appendChild(inputDiv);
+
+                        inputDiv.style.display = 'block';
+                        inputDiv.style.visibility = 'visible';
+
+                        //一時追加
+                        console.log("Smart Input appended:",currentOutputDiv.querySelector('[data-smart-input]'));
 
                     }
 
