@@ -1,6 +1,5 @@
-# SmartMemo Ver6.0
-
-### Where Notes Meet Code.
+### SmartMemo - Where Notes Meet Code.
+Currently under development
 
 開発期間：2026年6月中旬～継続開発中
 
@@ -8,15 +7,8 @@
 > expressions, and executable Python code in one workspace.
 > Markdown・数式・Pythonコードを1つのワークスペースで扱えるハイブリッドメモアプリです。
 
-【アプリのスクリーンショット】
 
-- エラー結果をMarkdownノートへ保存 
-![エラー結果をMarkdownノートへ保存](screenshots/error-result_1.png)
-
-![エラー結果をMarkdownノートへ保存](screenshots/error-result_2.png)
-
-
-## Ver6.0 更新内容
+## 更新内容
 - 🆕Python実行結果・エラー結果をMarkdownノートへ保存(Save Python execution results and errors to Markdown notes)
 - Markdown記法によるメモ作成・編集に対応（Markdown support for creating/editing memos）
 - KaTeXによる数式表示に対応（KaTeX support for mathematical expressions）
@@ -75,9 +67,14 @@
 ## Tech Stack
 - Python
 - Django
+- JavaScript
+- HTML
 - Bootstrap 5
 - CSS
 - SQLite 
+- Markdown
+- KaTex
+- CodeMirror
 - Git
 - GitHub
 
@@ -88,13 +85,13 @@
 - Responsive UI improvements
 - Email verification
 
-## Version History
-- Ver1.0 CRUD
-- Ver2.0 Search & Categories
-- Ver3.0 Authentication
-- Ver4.0 Profile / Password Change / Account Deletion
-- Ver5.0 Profile Image Upload & Password Reset
-- Ver6.0 Markdown, KaTeX & Python Execution　/ Execution Results & Error Handling
+## Development History
+- 1.0 CRUD
+- 2.0 Search & Categories
+- 3.0 Authentication
+- 4.0 Profile / Password Change / Account Deletion
+- 5.0 Profile Image Upload & Password Reset
+- 6.0 Markdown, KaTeX & Python Execution　/ Execution Results & Error Handling
 
 ## 開発メモ
 SmartMemoは、Djangoの学習とWebアプリケーション開発の理解を目的として開発しています。
