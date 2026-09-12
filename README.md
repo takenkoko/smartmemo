@@ -9,7 +9,6 @@ Currently under development
 
 
 ## 更新内容
-- 🆕Python実行結果・エラー結果をMarkdownノートへ保存(Save Python execution results and errors to Markdown notes)
 - Markdown記法によるメモ作成・編集に対応（Markdown support for creating/editing memos）
 - KaTeXによる数式表示に対応（KaTeX support for mathematical expressions）
 - Pyodideを利用したブラウザ上でのPythonコード実行機能を追加（Added browser-based Python execution using Pyodide）
@@ -20,7 +19,9 @@ Currently under development
 - メモ詳細画面を新規追加し、一覧画面をタイトル+更新日時のシンプル表示に変更（Added memo detail page; simplified list view）
 - CodeMirrorをmonokaiテーマに変更しダークモード化、コードブロックの表示もダークスタイルに統一（Dark theme for editor and code blocks）
 - Memoモデルにcreated_at / updated_atフィールドを追加（Added created_at/updated_at fields to Memo model）
-
+- Python実行結果・エラー結果をMarkdownノートへ保存(Save Python execution results and errors to Markdown notes)
+- Pythonのinput()によりユーザー入力に対応（Added Python input() support for interactive execution）
+- Pyodide + Web Workerを利用した非同期入力処理を実装（Inplemented asynchronous input handling using Pyodide + Web Worker）
 
 ## Features(主な機能)
 - ユーザー登録（Sign Up）
@@ -38,7 +39,9 @@ Currently under development
 - メモ詳細画面（Memo detail page）
 - KaTeX数式表示（KaTeX Math Rendering）
 - Pythonコード実行（Browser-based Python Execution）
+- Pythonのinput()によるユーザー入力（Interactive Python input()）
 - Python実行結果・エラー結果を保存（Save Python Execution Results　and Errors）
+
 
 ## Technical Highlights(開発内容)
 - Django標準認証フォームをカスタマイズ（Customized Django authentication forms）
@@ -55,6 +58,9 @@ Currently under development
 - CodeMirrorを利用したMarkdownコードエディタ導入
 - KaTeXによる数式レンダリング
 - Pyodideによるブラウザ内Python実行環境
+- Pyodide + web WorkerによるPythonコードの非同期実行
+- Pythonのinput()をカスタム入力処理へ交換し、ブラウザ上でユーザー入力を実現
+- input()による複数回のユーザー入力に対応
 - Python実行結果をMarkdownへ自動反映するノート機能
 - JavaScriptの共通モジュール化（markdown_editor.js / markdown_viewer.js）
 - コードブロックごとのPython実行結果管理（Execution result management for each Python code block）
@@ -92,6 +98,7 @@ Currently under development
 - 4.0 Profile / Password Change / Account Deletion
 - 5.0 Profile Image Upload & Password Reset
 - 6.0 Markdown, KaTeX & Python Execution　/ Execution Results & Error Handling
+- 7.0 Python input() Support
 
 ## 開発メモ
 SmartMemoは、Djangoの学習とWebアプリケーション開発の理解を目的として開発しています。
