@@ -63,10 +63,6 @@ if(!previewDiv || !textarea){
                         console.log("Worker started successfully.");
                     }
 
-                    if(type === 'worker_message_reveived'){
-                        console.log("Worker received message.");
-                    }
-
                     if(type === 'worker_load_started'){
                         console.log("Pyodide Worker load started.");
                     }
@@ -115,17 +111,12 @@ if(!previewDiv || !textarea){
                         inputDiv.appendChild(inputField);
                         inputDiv.appendChild(submitButton);
 
-                        //一時追加
-                        console.log("Current Output Div before append:",currentOutputDiv);
-                        console.log("Input Div before append:",inputDiv);
 
                         currentOutputDiv.appendChild(inputDiv);
 
                         inputDiv.style.display = 'block';
                         inputDiv.style.visibility = 'visible';
 
-                        //一時追加
-                        console.log("Smart Input appended:",currentOutputDiv.querySelector('[data-smart-input]'));
 
                     }
 
@@ -263,17 +254,23 @@ if(!previewDiv || !textarea){
                         //Stopボタンとして動作するようにする
                         if(button.textContent === '■ Stop'){
 
-                            console.log("Stop Clicked.");
-                            console.log("Before Terminate");
-
+                            
                             //Workerを停止
                             pyodideWorker.terminate();
-                            console.log("After Terminate");
+                            
 
+                            //SmartInputを削除
+                            const inputDiv = outputDiv.querySelector('[data-smart-input]');
+
+
+                            if(inputDiv){
+                                inputDiv.remove();
+                                
+                            }
+                            
                             //新しいWorkerを作成
                             createPyodideWorker();
-                            console.log("Worker Recreated");
-
+                            
                             //実行状態をリセット
                             currentOutputDiv = null;
                             currentButton = null;
@@ -295,6 +292,7 @@ if(!previewDiv || !textarea){
                         if(outputTextDiv){
                             outputTextDiv.textContent = '';
                         }
+
                         
                         outputDiv.classList.remove('text-danger');
                         outputDiv.classList.add('text-light');

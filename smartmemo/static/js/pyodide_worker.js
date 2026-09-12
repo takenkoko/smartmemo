@@ -10,8 +10,6 @@ let pyodide = null;
 //Pythonからの入力を持っている状態
 let inputResolver = null;
 
-//ユーザーが入力した値を一時保存する
-let inputValue = null;
 
 //Pythonからの入力を待っている状態
 async function smartInput(prompt){
@@ -49,14 +47,9 @@ self.addEventListener("message",async function(event) {
 
     const{ type,code,userInput,prompt } = event.data;
 
-    self.postMessage({ type:"worker_message_received"});
 
     //入力値を受け取った場合
     if(type === "input"){
-        console.log("Received user input:", event.data.userInput);
-
-        //入力したらinputValueに保存
-        inputValue = userInput;
 
         if(inputResolver){
             inputResolver(userInput);
@@ -79,32 +72,11 @@ self.addEventListener("message",async function(event) {
                 self.postMessage({ type: "stdout", text });
             }
         });
-
-        pyodide.setStdin({
-            stdin: () => {
-
-
-                //入力値が存在するときだけ返す形にする
-                if(inputValue !== null){
-                    const value = inputValue;
-                    inputValue = null;
-
-                    return value;
-                }
-
-                self.postMessage({
-                    type:"input_request",
-                    prompt:"入力してください"
-                });
-
-                
-            }
-        });
-
-        //input()をsmart_input()へ一時的に変換
+    
+        //input()をsmart_input()へ変換
         const convertedCode = code.replace(
-            'input("名前を入力してください：")',
-            'await smart_input("名前を入力してください：")'
+            /input\(\s*(["'])(.*?)\1\s*\)/g,
+            'await smart_input("$2")'
         );
 
         //Pythonコードを実行
