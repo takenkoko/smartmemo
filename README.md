@@ -77,9 +77,9 @@ Currently under development
 - HTML
 - Bootstrap 5
 - CSS
-- SQLite 
+- PostgreSQL
 - Markdown
-- KaTex
+- kaTex
 - CodeMirror
 - Git
 - GitHub
@@ -87,7 +87,6 @@ Currently under development
 ## Future Plans
 - Overleaf-style resizable editor and preview
 - Multi-language code execution
-- PostgreSQL migration
 - Responsive UI improvements
 - Email verification
 
@@ -97,12 +96,10 @@ Currently under development
 - 3.0 Authentication
 - 4.0 Profile / Password Change / Account Deletion
 - 5.0 Profile Image Upload & Password Reset
-- 6.0 Markdown, KaTeX & Python Execution　/ Execution Results & Error Handling
+- 6.0 Markdown, kaTeX & Python Execution　/ Execution Results & Error Handling
 - 7.0 Python input() Support
 
 ## 開発メモ
-SmartMemoは、Djangoの学習とWebアプリケーション開発の理解を目的として開発しています。
-現在も継続的に機能追加・改善を行い、バージョンアップを続けています。
-将来的には、通常のメモだけでなく、コードも保存・管理できるメモアプリへ発展させる予定です。
+SmartMemoは、Djangoの学習とWebアプリケーション開発の理解を目的として開発しています。現在も継続的に機能追加と改善を行っています。Markdown・数式・Pythonコードの実行に対応し、実行結果やエラーをMarkdownノートへ保存できる機能などを実装しています。
 
   
