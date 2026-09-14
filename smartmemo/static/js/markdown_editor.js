@@ -4,6 +4,7 @@ const textarea = document.getElementById('memo-content');
 if(!previewDiv || !textarea){
     console.warn("Markdown editor elements not found.");
 }else{
+
     //textareaをCodeMirrorに変換
     const editor = CodeMirror.fromTextArea(textarea, {
         mode: 'markdown',
@@ -19,16 +20,7 @@ if(!previewDiv || !textarea){
                 },
                 "Enter":"newlineAndIndentContinueMarkdownList"}
             });
-            
-            function resizeEditor(){
-                editor.setSize(
-                '100%', 
-                document.querySelector('#preview').clientHeight
-            );//高さプレビュー欄を揃える
 
-            }
-            
-            resizeEditor();
 
             //Pyodide Workerを作成
             let pyodideWorker = null;
