@@ -13,7 +13,8 @@ if(!previewDiv || !textarea){
         theme:'monokai',
         indentUnit: 4,
         tabSize: 4,
-        
+       inputStyle:'contenteditable',
+
         extraKeys:{
             "Tab":function(cm){
                 cm.replaceSelection("    ", "end");//4スペースでインデント
@@ -432,7 +433,6 @@ if(!previewDiv || !textarea){
             }
 
             //フォーム送信前に、Codemirrorの内容をtextareaに反映
-
             editor.on('change',updatePreview);
 
             updatePreview();
