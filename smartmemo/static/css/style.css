@@ -132,7 +132,7 @@ Smartmemo login 画面UIデザインを作成
 .editor-preview-container{
     display: flex;
     width: 100%;
-    height: calc(100vh - 320px);
+    height: calc(100vh - 320px );
     min-height: 300px;
     gap: 0;
 }
@@ -156,14 +156,20 @@ Smartmemo login 画面UIデザインを作成
 .CodeMirror{
     flex: 1 1 auto;
     min-height: 0;
+    height: 100%;
    
 }
 
-#preview{
+*#preview{
     flex: 1 1 auto;
     min-height: 0;
     height: 100%;
     overflow-y: auto;
+}
+
+/*プレビュー内の一番上の要素だけマージンをリセット*/
+#preview> *:first-child{
+    margin-top: 0;
 }
 
 .resize-handle{

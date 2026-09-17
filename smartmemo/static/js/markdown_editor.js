@@ -5,6 +5,13 @@ if(!previewDiv || !textarea){
     console.warn("Markdown editor elements not found.");
 }else{
 
+    function forceRepaint(el){
+        el.style.opacity = '0.999';
+        requestAnimationFrame(()=>{
+            el.style.opacity = '1';
+        });
+    }
+
     //textareaをCodeMirrorに変換
     const editor = CodeMirror.fromTextArea(textarea, {
         mode: 'markdown',
@@ -13,14 +20,48 @@ if(!previewDiv || !textarea){
         theme:'monokai',
         indentUnit: 4,
         tabSize: 4,
-       inputStyle:'contenteditable',
+        inputStyle:'contenteditable',
+
 
         extraKeys:{
             "Tab":function(cm){
                 cm.replaceSelection("    ", "end");//4スペースでインデント
                 },
-                "Enter":"newlineAndIndentContinueMarkdownList"}
-            });
+                "Enter":"newlineAndIndentContinueMarkdownList"
+        }
+    });
+
+    //IME交換中のプレビューに一時反映
+        let compositionStartPos = null;
+
+        editor.getInputField().addEventListener('compositionstart', () => {
+            compositionStartPos = editor.getCursor();
+        });
+        
+        editor.getInputField().addEventListener('compositionend', () => {
+            forceRepaint(previewDiv);
+            updatePreview();
+            forceRepaint(previewDiv);
+        });
+
+        editor.getInputField().addEventListener('compositionupdate',(e) =>{
+            console.log("compositionupdate:",e.data);
+
+            if(!compositionStartPos)return;
+
+            const lines = editor.getValue().split('\n');
+            const {line, ch } = compositionStartPos;
+            const target = lines[line] || '';
+
+            lines[line] = target.slice(0, ch)+(e.data || '') + target.slice(ch);
+
+            console.log(
+                'IMEからupdatePreviewへ：',
+                JSON.stringify(lines.join('\n'))
+            );
+
+            updatePreview(lines.join('\n'));
+        });
 
 
             //Pyodide Workerを作成
@@ -406,9 +447,21 @@ if(!previewDiv || !textarea){
 
             }
 
-            function renderMarkdown(){
-                const rawHTML = marked.parse(editor.getValue());
+            function renderMarkdown(sourceText){
+                console.log("sourceText:",JSON.stringify(sourceText));
+                
+                const text = sourceText !== undefined ? sourceText : editor.getValue();
+                
+                const rawHTML = marked.parse(text,{
+                    breaks:true
+                });
+
+                //一時追加
+                console.log("rawHTML:",rawHTML);
+
                 previewDiv.innerHTML = DOMPurify.sanitize(rawHTML);
+
+                console.log("previewHTML:",previewDiv.innerHTML);
             }
                 
             //数式のレンダリング
@@ -425,17 +478,31 @@ if(!previewDiv || !textarea){
                 attachRunButtons(previewDiv);//コードブロックに実行ボタンを追加
             }
 
-            //入力のたびにプレイヤーを更新
-            function updatePreview(){
-                renderMarkdown();
+            //入力のたびにプレビューを更新
+            function updatePreview(sourceText){
+                console.log("updatePreview sourceText:", JSON.stringify(sourceText));
+
+                renderMarkdown(sourceText);
                 renderMath();
                 renderCodeBlocks();
+
+              console.log("preview text:",previewDiv.innerText);
             }
 
             //フォーム送信前に、Codemirrorの内容をtextareaに反映
-            editor.on('change',updatePreview);
+            editor.on('change', function(){
+                console.log("change fired");
 
-            updatePreview();
+                //一時追加
+                console.log("change origin:", arguments[1].origin);
+                console.log("editor value:",JSON.stringify(editor.getValue()));
+                
+                updatePreview(editor.getValue());
+            });
+
+            editor.on('inputRead',function(cm,change){
+                updatePreview()
+            });
             
             const form = document.querySelector('form');
             form.addEventListener('submit', ()=>{
