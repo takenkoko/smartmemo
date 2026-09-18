@@ -32,35 +32,71 @@ if(!previewDiv || !textarea){
     });
 
     //IME交換中のプレビューに一時反映
-        let compositionStartPos = null;
+        let isComposing = false;
+        let lastStableText = "";
+
+        function getVisibleEditor(cm){
+            const codeEI = cm.getWrapperElement().querySelector('.CodeMirror-code');
+
+            if(!codeEI){
+                return cm.getValue();
+            }
+
+            const lines = codeEI.querySelectorAll('.CodeMirror-line');
+
+            return Array.from(lines)
+            .map(line => line.innerText.replace(/\u200B/g,''))
+            .join('\n');
+        }
 
         editor.getInputField().addEventListener('compositionstart', () => {
-            compositionStartPos = editor.getCursor();
+            isComposing = true;
+            lastStableText = editor.getValue();
+
+            console.log(
+                'IME開始時の確定済みの本文：',
+                JSON.stringify(lastStableText)
+            );
         });
         
         editor.getInputField().addEventListener('compositionend', () => {
-            forceRepaint(previewDiv);
-            updatePreview();
-            forceRepaint(previewDiv);
+
+            isComposing = false;
+
         });
 
-        editor.getInputField().addEventListener('compositionupdate',(e) =>{
-            console.log("compositionupdate:",e.data);
-
-            if(!compositionStartPos)return;
-
-            const lines = editor.getValue().split('\n');
-            const {line, ch } = compositionStartPos;
-            const target = lines[line] || '';
-
-            lines[line] = target.slice(0, ch)+(e.data || '') + target.slice(ch);
-
+        editor.getInputField().addEventListener('compositionupdate',(event) =>{
+            
             console.log(
-                'IMEからupdatePreviewへ：',
-                JSON.stringify(lines.join('\n'))
+                '確認済み本文：',
+                JSON.stringify(lastStableText)
+        
             );
 
-            updatePreview(lines.join('\n'));
+            console.log(
+                'IME交換中',
+                JSON.stringify(event.data)
+            );
+
+            //現在のカーソル位置を取得
+            const cursor = editor.getCursor();
+
+            //カーソル位置を文字列上のインデックスに交換
+            const cursorIndex = editor.indexFromPos(cursor);
+
+            //カーソル位置の前後に分割
+            const beforeCursor = lastStableText.slice(0,cursorIndex);
+            const afterCursor = lastStableText.slice(cursorIndex);
+
+            //IME入力中の文字をカーソル位置に挿入
+            const previewText = beforeCursor + event.data + afterCursor;
+
+            console.log(
+                'プレビュー用：',
+                JSON.stringify(previewText)
+            );
+
+            updatePreview(previewText);
         });
 
 
@@ -459,9 +495,10 @@ if(!previewDiv || !textarea){
                 //一時追加
                 console.log("rawHTML:",rawHTML);
 
+                console.log("☆previewを書き換えます");
                 previewDiv.innerHTML = DOMPurify.sanitize(rawHTML);
 
-                console.log("previewHTML:",previewDiv.innerHTML);
+               
             }
                 
             //数式のレンダリング
@@ -480,9 +517,11 @@ if(!previewDiv || !textarea){
 
             //入力のたびにプレビューを更新
             function updatePreview(sourceText){
+                console.log("========== updatePreview ==========");
                 console.log("updatePreview sourceText:", JSON.stringify(sourceText));
 
                 renderMarkdown(sourceText);
+                
                 renderMath();
                 renderCodeBlocks();
 
@@ -491,17 +530,18 @@ if(!previewDiv || !textarea){
 
             //フォーム送信前に、Codemirrorの内容をtextareaに反映
             editor.on('change', function(){
-                console.log("change fired");
+                if(isComposing) return;
 
                 //一時追加
                 console.log("change origin:", arguments[1].origin);
                 console.log("editor value:",JSON.stringify(editor.getValue()));
                 
+                lastStableText = editor.getValue();
                 updatePreview(editor.getValue());
             });
 
             editor.on('inputRead',function(cm,change){
-                updatePreview()
+                //updatePreview()
             });
             
             const form = document.querySelector('form');
