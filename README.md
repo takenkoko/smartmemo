@@ -22,6 +22,7 @@ Currently under development
 - Python実行結果・エラー結果をMarkdownノートへ保存(Save Python execution results and errors to Markdown notes)
 - Pythonのinput()によりユーザー入力に対応（Added Python input() support for interactive execution）
 - Pyodide + Web Workerを利用した非同期入力処理を実装（Inplemented asynchronous input handling using Pyodide + Web Worker）
+- CodeMirrorのIME入力中にカーソル位置に合わせてMarkdownプレビューを更新する処理を改善（Improved Markdown preview updates during IME input based on cursor position）
 
 ## Features(主な機能)
 - ユーザー登録（Sign Up）
@@ -58,7 +59,7 @@ Currently under development
 - CodeMirrorを利用したMarkdownコードエディタ導入
 - KaTeXによる数式レンダリング
 - Pyodideによるブラウザ内Python実行環境
-- Pyodide + web WorkerによるPythonコードの非同期実行
+-  Pyodide + Web Workerを利用した非同期入力処理を実装（Implemented asynchronous input handling using Pyodide + Web Worker）
 - Pythonのinput()をカスタム入力処理へ交換し、ブラウザ上でユーザー入力を実現
 - input()による複数回のユーザー入力に対応
 - Python実行結果をMarkdownへ自動反映するノート機能
@@ -98,6 +99,7 @@ Currently under development
 - 5.0 Profile Image Upload & Password Reset
 - 6.0 Markdown, kaTeX & Python Execution　/ Execution Results & Error Handling
 - 7.0 Python input() Support
+- 7.1 CodeMirror IME Preview Fix
 
 ## 開発メモ
 SmartMemoは、Djangoの学習とWebアプリケーション開発の理解を目的として開発しています。現在も継続的に機能追加と改善を行っています。Markdown・数式・Pythonコードの実行に対応し、実行結果やエラーをMarkdownノートへ保存できる機能などを実装しています。
