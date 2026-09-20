@@ -7,6 +7,27 @@ Currently under development
 > expressions, and executable Python code in one workspace.
 > Markdown・数式・Pythonコードを1つのワークスペースで扱えるハイブリッドメモアプリです。
 
+##　アプリイメージ
+
+![SmartMemo-メモ新規画面](screenshots/sample01.png)
+左側がMarkdown、右がプレビューになっています。
+
+![SmartMemo-RUN実行対応](screenshots/sample2.png)
+Markdownにコードを入力し、プレビュー側の実行ボタンを押すと、実行結果が表示されます。実行結果はMarkdownに自動的に記録されるため、メモを保存した後も確認できます。
+
+![SmartMemo-KaTeX対応](screenshots/sample3.png)
+数式を記録したいと思ったので、数式対応も追加してみました。
+
+![SmartMemo-メイン画面](screenshots/sample4.png)
+書き終えたら保存、するとメイン画面に戻ります。
+
+![SmartMemo-メモ詳細画面](screenshots/sample5.png)
+保存された記事内容をクリックするとメモ詳細を確認できます。編集したい場合、黄色いボタンをクリックします。
+
+![SmartMemo-編集画面](screenshots/sample6.png)
+黄色いボタンを押すと、編集画面に入ります。編集後更新すると、変更内容が保存されます。
+
+※現在、開発段階であり、公開時には画面や機能が変更される場合があります。
 
 ## 更新内容
 - Markdown記法によるメモ作成・編集に対応（Markdown support for creating/editing memos）
