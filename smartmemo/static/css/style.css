@@ -139,7 +139,7 @@ Smartmemo login 画面UIデザインを作成
 
 .editor-section,
 .preview-section{
-    flex: 1 1 auto;
+    flex: 0 0 calc((100% - 16px) / 2);
     min-width: 0;
     min-height: 0;
     display: flex;
@@ -160,7 +160,7 @@ Smartmemo login 画面UIデザインを作成
    
 }
 
-*#preview{
+#preview{
     flex: 1 1 auto;
     min-height: 0;
     height: 100%;
