@@ -4,6 +4,14 @@ Smartmemo メニューバー 画面UIデザインを作成
 
 body{
     background-color: aliceblue;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+main{
+    flex: 1;
+    padding-bottom: 30px;
 }
 
 /*ナビゲーションバー*/
@@ -132,9 +140,10 @@ Smartmemo login 画面UIデザインを作成
 .editor-preview-container{
     display: flex;
     width: 100%;
-    height: calc(100vh - 320px );
+    height: calc(100vh - 350px );
     min-height: 300px;
     gap: 0;
+    margin-bottom: 30px;
 }
 
 .editor-section,
@@ -183,4 +192,12 @@ Smartmemo login 画面UIデザインを作成
 
 .resize-handle:hover{
     background-color: #abb5bd;
+}
+
+/*フッター*/
+.smartmemo-footer{
+    padding: 20px 0;
+    background-color: #1e3a8a;
+    color: white;
+    text-align: center;
 }
