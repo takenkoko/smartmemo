@@ -9,7 +9,7 @@ Currently under development
 
 ##　アプリイメージ
 
-![SmartMemo-メモ新規画面](screenshots/sample01.png)
+![SmartMemo-メモ新規画面](screenshots/sample1.png)
 左側がMarkdown、右がプレビューになっています。
 
 ![SmartMemo-RUN実行対応](screenshots/sample2.png)
