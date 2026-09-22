@@ -1,5 +1,5 @@
 from django.shortcuts import render,redirect
-from .models import Memo, Category
+from .models import Memo, Category, Tag
 from django.db.models import Q
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
@@ -61,6 +61,7 @@ def create(request):
         title=request.POST.get("title", "").strip()
         content=request.POST["content"]
         category_id = request.POST.get("category")
+        tag_names = request.POST.get("tags","")
 
         #titleが空欄の場合、エラーと返す
         if not title:
@@ -74,12 +75,20 @@ def create(request):
         if category_id:
             category = Category.objects.get(id=category_id)
 
-        Memo.objects.create(
+        memo = Memo.objects.create(
             user=request.user,
             title=title,
             content=content,
             category=category
         )
+        if tag_names:
+            tag_list = [tag.strip() for tag in tag_names.split(",") if tag.strip()]
+
+            #tag_listをTagオブジェクトにしてメモに紐付ける
+            for tag_name in tag_list:
+                tag, create = Tag.objects.get_or_create(name=tag_name)
+                memo.tags.add(tag)
+
         return redirect("index")
     return render(request,
                   "smartmemo/create.html",
@@ -101,12 +110,31 @@ def edit(request,memo_id):
         memo.title=request.POST["title"]
         memo.content=request.POST["content"]
 
+        category_id = request.POST.get("category")
+
+        tag_names = request.POST.get("tags","")
+
+        if category_id :
+            memo.category = Category.objects.get(id=category_id)
+        else:
+            memo.category = None
+
+        memo.tags.clear()
+
+        if tag_names:
+            tag_list = [tag.strip() for tag in tag_names.split(",") if tag.strip()]
+
+            for tag_name in tag_list:
+                tag, created = Tag.objects.get_or_create(name=tag_name)
+                memo.tags.add(tag)
+
         memo.save()
 
         return redirect("index")
 
     return render(request,"smartmemo/edit.html",{
         "memo":memo,
+        "categories":Category.objects.all(),
     })
 
 #=============

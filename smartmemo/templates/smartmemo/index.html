@@ -25,6 +25,15 @@ SmartMemoへようこそ!
         </a>
         {% endif %}
 
+        {% if memo.tags.all %}
+        <div class="mb-2">
+            {% for tag in memo.tags.all %}
+            <span class="badge bg-secondary">
+                #{{ tag.name }}
+            </span>
+            {% endfor %}
+        </div>
+        {% endif %}
 
         <h4 style="font-size: 2rem;">
             <a href="{% url 'detail' memo.id %}" style="text-decoration: none; color: inherit;">

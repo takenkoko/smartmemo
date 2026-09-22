@@ -15,7 +15,7 @@
                 メモを編集
             </h1> 
             
-            <form method="post" class="edit-form">
+            <form method="post">
                 {%csrf_token%}
 
                 <!--実行結果を送るための隠しフィールドを追加-->
@@ -29,6 +29,36 @@
                     <label class="form-label">タイトル</label>
                     <input type="text" name="title" value="{{memo.title}}" class="form-control">
                 </div>
+
+                <!--カテゴリ機能-->
+                <div class="mb-3">
+                    <label class="form-label">
+                        カテゴリ
+                    </label>
+
+                    <select name="category" class="form-select">
+                        <option value="">
+                            --------
+                        </option>
+                        {% for category in categories %}
+                        <option value="{{ category.id }}" {% if memo.category and memo.category.id == category.id %}selected{% endif %}>
+                            {{ category.name }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <!--タグ機能-->
+                <div class="mb-3">
+                    <label class="form-label">
+                        タグ
+                    </label>
+                    <input type="text" name="tags" class="form-control" value="{% for tag in memo.tags.all %}{{ tag.name}}{% if not forloop.last %},{% endif %}{% endfor %}" placeholder="例：django, python, debug">
+                    <div class="form-text">
+                        複数入力する場合は、カンマ(,)で区切ってください。
+                    </div>
+                </div>
+
 
                 <div class="editor-preview-container">
 

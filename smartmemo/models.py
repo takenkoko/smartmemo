@@ -11,6 +11,12 @@ class Category(models.Model):
     def __str__(self):
         return self.name
 
+class Tag(models.Model):
+    name = models.CharField(max_length=50,unique=True)
+
+    def __str__(self):
+        return self.name
+
 #日本語ファイル名や特殊文字によるトラブル対策
 def profile_icon_path(instance,filename):
     ext = filename.split('.')[-1]
@@ -45,6 +51,12 @@ class Memo(models.Model):
         null=True,
         blank=True,  
     )
+
+    tags = models.ManyToManyField(
+        Tag,
+        blank=True,
+    )
+    
     created_at = models.DateTimeField(auto_now_add=True)  # 作成日時
     updated_at = models.DateTimeField(auto_now=True)      # 更新日時
 
