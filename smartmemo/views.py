@@ -202,7 +202,7 @@ def category(request,category_id):
 @login_required
 def tag(request,tag_id):
     tag = Tag.objects.get(id=tag_id)
-    #ログインユーザーのメモだけえ、そのタグを表示する
+    #ログインユーザーのメモだけ、そのタグを表示する
     memos = Memo.objects.filter(user=request.user,tags=tag)
 
     return render(
