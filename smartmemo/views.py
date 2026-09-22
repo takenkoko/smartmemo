@@ -160,14 +160,15 @@ def search(request):
         user=request.user
         ).filter(
             Q(title__icontains=keyword)|
-            Q(content__icontains=keyword)
-
-        )
+            Q(content__icontains=keyword)|
+            Q(tags__name__icontains=keyword)
+        ).distinct()
 
     #検索結果にもページネーションを追加する
     paginator = Paginator(memos,10)
     page_number = request.GET.get("page")
     page_obj = paginator.get_page(page_number)
+
 
     return render(
         request,
