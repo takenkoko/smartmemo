@@ -28,9 +28,11 @@ SmartMemoへようこそ!
         {% if memo.tags.all %}
         <div class="mb-2">
             {% for tag in memo.tags.all %}
-            <span class="badge bg-secondary">
-                #{{ tag.name }}
-            </span>
+            <a href="{% url 'tag' tag.id %}" class="text-decoration-none">
+                <span class="badge bg-secondary">
+                    #{{ tag.name }}
+                </span>
+            </a>
             {% endfor %}
         </div>
         {% endif %}

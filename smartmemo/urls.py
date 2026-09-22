@@ -18,6 +18,8 @@ urlpatterns=[
 
     path("category/<int:category_id>/",views.category,name="category",),
 
+    path("tag/<int:tag_id>/",views.tag,name="tag"),
+
     path("register/", views.register, name="register"),
 
     path("profile/",views.profile, name="profile"),
