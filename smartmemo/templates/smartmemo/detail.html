@@ -17,6 +17,18 @@
             </a>
             {% endif %}
 
+            {% if memo.tags.all %}
+            <div class="mb-2">
+                {% for tag in memo.tags.all %}
+                <a href="{% url 'tag' tag.id %}" class="text-decoration-none">
+                    <sp class="badge bg-secondary">
+                        #{{ tag.name }}
+                    </sp>
+                </a>
+                {% endfor %}
+            </div>
+            {% endif %}
+
             <h2>{{ memo.title }}</h2>
             <hr>
 
