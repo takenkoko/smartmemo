@@ -86,7 +86,9 @@ def create(request):
 
             #tag_listをTagオブジェクトにしてメモに紐付ける
             for tag_name in tag_list:
-                tag, create = Tag.objects.get_or_create(name=tag_name)
+                tag, create = Tag.objects.get_or_create(
+                    user=request.user,
+                    name=tag_name)
                 memo.tags.add(tag)
 
         return redirect("index")
@@ -125,7 +127,9 @@ def edit(request,memo_id):
             tag_list = [tag.strip() for tag in tag_names.split(",") if tag.strip()]
 
             for tag_name in tag_list:
-                tag, created = Tag.objects.get_or_create(name=tag_name)
+                tag, created = Tag.objects.get_or_create(
+                    user=request.user,
+                    name=tag_name)
                 memo.tags.add(tag)
 
         memo.save()
@@ -214,6 +218,20 @@ def tag(request,tag_id):
             "selected_tag":tag,
         }
     )
+
+#===========
+#タグ削除機能
+#===========
+@login_required
+def tag_delete(request,tag_id):
+    tag = Tag.objects.get(
+        id=tag_id,
+        user=request.user
+    )
+
+    if request.method == "POST":
+        tag.delete()
+        return redirect("index")
 
 #===============
 #ユーザー登録機能

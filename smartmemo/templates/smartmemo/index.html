@@ -12,6 +12,21 @@ SmartMemoへようこそ!
 <p>
     シンプルなメモ管理アプリ
 </p>
+
+{% if selected_tag %}
+<div class="mb-3">
+    <span class="badge bg-secondary">
+        #{{ selected_tag.name }}
+    </span>
+
+    <form method="post" action="{% url 'tag_delete' selected_tag.id %}" style="display: inline;">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-link p-0 text-danger text-decoration-none">
+            ×
+        </button>
+    </form>
+</div>
+{% endif %}
         
 {% for memo in memos %}
 <div class="card mb-3 shadow-sm"> <!--カードに影をつける-->

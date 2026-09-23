@@ -12,7 +12,19 @@ class Category(models.Model):
         return self.name
 
 class Tag(models.Model):
-    name = models.CharField(max_length=50,unique=True)
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        )
+    name = models.CharField(max_length=50)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["user","name"],
+                name = "unique_user_tag",
+            )
+        ]
 
     def __str__(self):
         return self.name
@@ -56,7 +68,7 @@ class Memo(models.Model):
         Tag,
         blank=True,
     )
-    
+
     created_at = models.DateTimeField(auto_now_add=True)  # 作成日時
     updated_at = models.DateTimeField(auto_now=True)      # 更新日時
 
