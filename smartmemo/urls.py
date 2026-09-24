@@ -20,7 +20,7 @@ urlpatterns=[
 
     path("tag/<int:tag_id>/",views.tag,name="tag"),
 
-    path("tag/<int:tag_id>/delete/",views.tag_delete, name="tag_delete"),
+    path("memo/<int:memo_id>/tag/<int:tag_id>/delete/",views.tag_delete,name="tag_delete"),
 
     path("register/", views.register, name="register"),
 

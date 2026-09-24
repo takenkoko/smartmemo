@@ -194,6 +194,21 @@ Smartmemo login 画面UIデザインを作成
     background-color: #abb5bd;
 }
 
+/*カーソルをかざすとタグの削除が表示*/
+.tag_delete-form{
+    display: inline;
+}
+.tag_delete-form button{
+    display: none;
+    border: none;
+    background: none;
+    padding: 0;
+    color: white;
+}
+.tag-badge:hover .tag_delete-form button{
+    display: inline;
+}
+
 /*フッター*/
 .smartmemo-footer{
     padding: 20px 0;

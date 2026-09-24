@@ -12,22 +12,7 @@ SmartMemoへようこそ!
 <p>
     シンプルなメモ管理アプリ
 </p>
-
-{% if selected_tag %}
-<div class="mb-3">
-    <span class="badge bg-secondary">
-        #{{ selected_tag.name }}
-    </span>
-
-    <form method="post" action="{% url 'tag_delete' selected_tag.id %}" style="display: inline;">
-        {% csrf_token %}
-        <button type="submit" class="btn btn-link p-0 text-danger text-decoration-none">
-            ×
-        </button>
-    </form>
-</div>
-{% endif %}
-        
+  
 {% for memo in memos %}
 <div class="card mb-3 shadow-sm"> <!--カードに影をつける-->
     <div class="card-body">
@@ -40,17 +25,24 @@ SmartMemoへようこそ!
         </a>
         {% endif %}
 
-        {% if memo.tags.all %}
-        <div class="mb-2">
-            {% for tag in memo.tags.all %}
-            <a href="{% url 'tag' tag.id %}" class="text-decoration-none">
-                <span class="badge bg-secondary">
-                    #{{ tag.name }}
-                </span>
+    {% if memo.tags.all %}
+    <div class="mb-2">
+        {% for tag in memo.tags.all %}
+        <span class="badge bg-secondary tag-badge">
+            <a href="{% url 'tag' tag.id %}" class="text-decoration-none text-white">
+                #{{ tag.name }}
             </a>
-            {% endfor %}
-        </div>
-        {% endif %}
+            
+            <form method="post" action="{% url 'tag_delete' memo.id tag.id %}" class="tag_delete-form">
+                {% csrf_token %}
+                <button type="submit" class="tag-delete-button">
+                    ×
+                </button>
+            </form>
+        </span>
+        {% endfor %}
+    </div>
+    {% endif %}
 
         <h4 style="font-size: 2rem;">
             <a href="{% url 'detail' memo.id %}" style="text-decoration: none; color: inherit;">

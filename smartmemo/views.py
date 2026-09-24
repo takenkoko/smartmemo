@@ -223,14 +223,19 @@ def tag(request,tag_id):
 #タグ削除機能
 #===========
 @login_required
-def tag_delete(request,tag_id):
-    tag = Tag.objects.get(
-        id=tag_id,
+def tag_delete(request,memo_id,tag_id):
+    memo = Memo.objects.get(
+        id=memo_id,
         user=request.user
     )
 
+    tag = Tag.objects.get(
+        id=tag_id,
+        user=request.user,
+    )
+
     if request.method == "POST":
-        tag.delete()
+        memo.tags.remove(tag)
         return redirect("index")
 
 #===============
