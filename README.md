@@ -44,6 +44,9 @@ Markdownにコードを入力し、プレビュー側の実行ボタンを押す
 - Pythonのinput()によりユーザー入力に対応（Added Python input() support for interactive execution）
 - Pyodide + Web Workerを利用した非同期入力処理を実装（Inplemented asynchronous input handling using Pyodide + Web Worker）
 - CodeMirrorのIME入力中にカーソル位置に合わせてMarkdownプレビューを更新する処理を改善（Improved Markdown preview updates during IME input based on cursor position）
+- Tag機能を追加し、ユーザーごとにTagを管理できるように対応(Added tag management with user-specific tags)
+- Tagをクリックして該当するメモを絞り込める機能を追加（Added memo filtering by tag）
+- メモごとにTagを外せる機能を追加（Added per-memo tag removal）
 
 ## Features(主な機能)
 - ユーザー登録（Sign Up）
@@ -55,6 +58,9 @@ Markdownにコードを入力し、プレビュー側の実行ボタンを押す
 - メモの作成・編集・削除（Create / Edit / Delete）
 - メモ検索（Search）
 - カテゴリ管理（Categories）
+- Tag管理（Tags）
+- Tagによるメモの絞り込み(Tag-based memo filtering)
+- メモごとのTag削除（Per-memo tag removal）
 - アカウント削除（Account Deletion）
 - Markdown対応メモ作成・編集（Markdown-based memo creation/editing）
 - コードエディタ（CodeMirror、シンタックスハイライト付き）
@@ -62,7 +68,7 @@ Markdownにコードを入力し、プレビュー側の実行ボタンを押す
 - KaTeX数式表示（KaTeX Math Rendering）
 - Pythonコード実行（Browser-based Python Execution）
 - Pythonのinput()によるユーザー入力（Interactive Python input()）
-- Python実行結果・エラー結果を保存（Save Python Execution Results　and Errors）
+- Python実行結果・エラー結果を保存（Save Python Execution Results　and Errors
 
 
 ## Technical Highlights(開発内容)
@@ -89,6 +95,12 @@ Markdownにコードを入力し、プレビュー側の実行ボタンを押す
 - Python実行結果・エラー結果のMarkdown自動保存（Automatic saving of Python execution results and errors to Markdown）
 - 'text'/'error' コードブロックによる実行結果とエラーの区別（Distinguishing execution results and errors using `text` / `error` code blocks）
 - CSSによるPython実行エラーの視覚的表示 （Visual error display using CSS）
+- ManyToManyFieldを利用したMemoとTagの関連付け
+- ForeignKeyを利用したユーザーごとのTag管理
+- UniqueConstraintによるユーザー単位のTag名重複防止
+- memo.tags.remove(tag) によるMemoとTagの関連解除
+- POST + CSRFによるTag削除処理
+- Tag削除時にuser=request.userを指定し、ユーザー単位でアクセスを制限
 
 
 
@@ -121,6 +133,7 @@ Markdownにコードを入力し、プレビュー側の実行ボタンを押す
 - 6.0 Markdown, kaTeX & Python Execution　/ Execution Results & Error Handling
 - 7.0 Python input() Support
 - 7.1 CodeMirror IME Preview Fix
+- 7.2 Tag Management / User-specific Tags & Tag Removal
 
 ## 開発メモ
 SmartMemoは、Djangoの学習とWebアプリケーション開発の理解を目的として開発しています。現在も継続的に機能追加と改善を行っています。Markdown・数式・Pythonコードの実行に対応し、実行結果やエラーをMarkdownノートへ保存できる機能などを実装しています。
