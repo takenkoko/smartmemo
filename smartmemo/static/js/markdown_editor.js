@@ -51,6 +51,17 @@ if(!previewDiv || !textarea){
 
         editor.getInputField().addEventListener('compositionstart', () => {
             isComposing = true;
+
+            console.log(
+                'compositionstart editor.getValue:',
+                JSON.stringify(editor.getValue())
+            );
+
+            console.log(
+                  'compositionstart getVisibleEditor:',
+                  JSON.stringify(getVisibleEditor(editor))
+            );
+
             lastStableText = editor.getValue();
 
             console.log(
@@ -60,7 +71,25 @@ if(!previewDiv || !textarea){
         });
         
         editor.getInputField().addEventListener('compositionend', () => {
-
+              // contenteditable要素そのものの生テキストも見てみる
+              console.log(
+                'compositionend inputField.textContent:',
+                JSON.stringify(editor.getInputField().textContent)
+            );
+            
+            console.log(
+                'compositionend inputField.innerText:',
+                JSON.stringify(editor.getInputField().innerText)
+            );
+            
+            const visibleText = getVisibleEditor(editor);
+            
+            console.log(
+                'compositionend getVisibleEditor:',
+                JSON.stringify(visibleText)
+            );
+            
+            lastStableText = visibleText;
             isComposing = false;
 
         });
@@ -112,7 +141,7 @@ if(!previewDiv || !textarea){
 
             function createPyodideWorker(){
                 
-                pyodideWorker = new Worker('/static/js/pyodide_worker.js?v=2');
+                pyodideWorker = new Worker('/static/js/pyodide_worker.js?v=3');
 
                 console.log("Pyodide Worker created.");
 
@@ -168,26 +197,22 @@ if(!previewDiv || !textarea){
                         submitButton.addEventListener('click',function(){
 
                             const userInput = inputField.value;
-
                             console.log("User Input:", userInput);
-
                             //入力値をWorkerへ送信
                             pyodideWorker.postMessage({
                                 type:'input',
                                 userInput: userInput
                             });
+
+                            //追加：送信したら自分自身のUIを消す
+                            inputDiv.remove();
                         });
                         
                         inputDiv.appendChild(inputField);
                         inputDiv.appendChild(submitButton);
-
-
                         currentOutputDiv.appendChild(inputDiv);
-
                         inputDiv.style.display = 'block';
                         inputDiv.style.visibility = 'visible';
-
-
                     }
 
                     
@@ -479,6 +504,8 @@ if(!previewDiv || !textarea){
                 after;
                 
                 //エディタを更新
+                console.log("★★ editor.setValue(newContent)実行：");
+                console.log("★★ newContent:",JSON.stringify(newContent));
                 editor.setValue(newContent);
 
             }
@@ -492,10 +519,6 @@ if(!previewDiv || !textarea){
                     breaks:true
                 });
 
-                //一時追加
-                console.log("rawHTML:",rawHTML);
-
-                console.log("☆previewを書き換えます");
                 previewDiv.innerHTML = DOMPurify.sanitize(rawHTML);
 
                
@@ -517,25 +540,18 @@ if(!previewDiv || !textarea){
 
             //入力のたびにプレビューを更新
             function updatePreview(sourceText){
-                console.log("========== updatePreview ==========");
-                console.log("updatePreview sourceText:", JSON.stringify(sourceText));
-
                 renderMarkdown(sourceText);
-                
-                renderMath();
-                renderCodeBlocks();
 
-              console.log("preview text:",previewDiv.innerText);
+                if(!isComposing){
+                    renderMath();
+                }
+                renderCodeBlocks();
             }
 
             //フォーム送信前に、Codemirrorの内容をtextareaに反映
             editor.on('change', function(){
                 if(isComposing) return;
 
-                //一時追加
-                console.log("change origin:", arguments[1].origin);
-                console.log("editor value:",JSON.stringify(editor.getValue()));
-                
                 lastStableText = editor.getValue();
                 updatePreview(editor.getValue());
             });

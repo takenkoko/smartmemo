@@ -1,6 +1,8 @@
 //PyodideをWorker内で読み込む
 importScripts("https://cdn.jsdelivr.net/pyodide/v0.26.2/full/pyodide.js");
 
+console.log("★★★ NEW pyodide_worker.js loaded ★★★");
+
 self.postMessage({
     type:"worker_started"
 });
@@ -75,9 +77,17 @@ self.addEventListener("message",async function(event) {
     
         //input()をsmart_input()へ変換
         const convertedCode = code.replace(
-            /input\(\s*(["'])(.*?)\1\s*\)/g,
-            'await smart_input("$2")'
+            /input\s*\(\s*([^()]*)\s*\)/g,
+            'await smart_input($1)'
         );
+        
+        console.log("★★★ conversion section reached ★★★");
+        console.log("convertedCode:",convertedCode);
+
+        self.postMessage({
+            type:"converted_code",
+            code:convertedCode 
+        });
 
         //Pythonコードを実行
         await pyodide.runPythonAsync(convertedCode);
